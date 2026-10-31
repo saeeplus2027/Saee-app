@@ -112,12 +112,18 @@ public class MainActivity extends Activity {
     private boolean isGoogleMapsUrl(Uri uri) {
         String host = uri.getHost();
         String path = uri.getPath();
-        return host != null && path != null
-                && (host.equalsIgnoreCase("google.com")
-                    || host.equalsIgnoreCase("www.google.com")
-                    || host.equalsIgnoreCase("maps.google.com")
-                    || host.equalsIgnoreCase("maps.google.co.uk")
-                    || host.toLowerCase().startsWith("maps.google."))
+        if (host == null) return false;
+        String normalizedHost = host.toLowerCase(java.util.Locale.ROOT);
+        // Google Maps share links are sometimes shortened to maps.app.goo.gl.
+        if (normalizedHost.equals("maps.app.goo.gl") || normalizedHost.equals("goo.gl")) {
+            return true;
+        }
+        return path != null
+                && (normalizedHost.equals("google.com")
+                    || normalizedHost.equals("www.google.com")
+                    || normalizedHost.equals("maps.google.com")
+                    || normalizedHost.equals("maps.google.co.uk")
+                    || normalizedHost.startsWith("maps.google."))
                 && (path.startsWith("/maps") || path.startsWith("/dir"));
     }
 
